@@ -38,9 +38,10 @@ g__handle_events ()
 }
 
 void
-g_setup (game_t *game, core_t *core)
+g_setup (game_t *game, core_t *core, net_connection_t *net)
 {
   game->core = core;
+  game->net = net;
   p_setup (&localplayer, &game->world, &game->camera);
   g_w_setup (&game->world, 20.f, 1.25f);
 
