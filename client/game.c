@@ -7,7 +7,6 @@
 
 game_player_t localplayer;
 game_weapon_t w_pistol;
-game_weapon_t w_tracer;
 obj_t *dummy_model;
 
 void
@@ -26,13 +25,10 @@ g__handle_events ()
           switch (event.key.keysym.sym)
             {
             case SDLK_1:
-              localplayer.current_weapon = &w_pistol;
+              localplayer.current_weapon = NULL;
               break;
             case SDLK_2:
-              // localplayer.current_weapon = &w_tracer;
-              break;
-            case SDLK_3:
-              localplayer.current_weapon = NULL;
+              localplayer.current_weapon = &w_pistol;
               break;
             default:
               break;
@@ -57,22 +53,12 @@ g_setup (game_t *game, core_t *core)
     w_pistol.viewmodel.scale = 0.05f;
     w_pistol.viewmodel.rotation.y = PLAYER_PITCH_CAP * 2;
   }
-  /*
-{ // tracer weapon
-g_weap_setup (&w_tracer, 120, 5);
-g_vm_setup (&w_tracer.viewmodel, game->core, localplayer.camera,
-          g_ol_setup (game->core, "assets/tracer.obj"));
-w_tracer.viewmodel.scale = 0.05f;
-w_tracer.viewmodel.rotation.y = -PLAYER_PITCH_CAP;
-}
-  */
 }
 void
 g_destroy (game_t *game)
 {
   p_destroy (&localplayer);
   g_weap_destroy (&w_pistol);
-  g_weap_destroy (&w_tracer);
 }
 void
 g_run (game_t *game)
