@@ -1,5 +1,6 @@
 #include "viewmodel.h"
 #include "bootleg3d.c"
+#include <math.h>
 
 void
 g_vm_setup (game_viewmodel_t *viewmodel, core_t *core, game_camera_t *camera,

@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include <enet/enet.h>
+#include <stdint.h>
 
 typedef struct net_data_s
 {

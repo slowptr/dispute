@@ -1,13 +1,9 @@
 #include "core_wrapper.h"
 #include "game.h"
 #include "network.h"
-#include "renderer.h"
-
-#define BOOTLEG3D_IMPLEMENTATION
-#include "bootleg3d.c"
 
 int
-main ()
+main (int argc, char **argv)
 {
   net_connection_t net;
   core_t core;

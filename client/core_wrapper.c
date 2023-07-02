@@ -1,4 +1,6 @@
 #include "core_wrapper.h"
+
+#define BOOTLEG3D_IMPLEMENTATION
 #include "bootleg3d.c"
 
 void

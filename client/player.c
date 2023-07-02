@@ -1,5 +1,6 @@
 #include "player.h"
 #include "bootleg3d.c"
+#include <math.h>
 
 void
 p__movement_test (game_player_t *player)

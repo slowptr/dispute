@@ -1,4 +1,5 @@
 #include "obj_loader.h"
+#include <stdio.h>
 
 obj_t *
 g_ol_setup (core_t *core, const char *file_name)

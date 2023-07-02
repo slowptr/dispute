@@ -1,2 +1,5 @@
-./a.out
+a.out
+a.exe
 err.txt
+Makefile.linux
+Makefile.win32
