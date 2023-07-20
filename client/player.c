@@ -1,5 +1,6 @@
 #include "player.h"
 #include "bootleg3d.c"
+#include "network.h"
 #include <math.h>
 
 void
@@ -63,6 +64,13 @@ p__handle_input (game_player_t *player)
   player->keys.left = keys[SDL_SCANCODE_LEFT];
   player->keys.right = keys[SDL_SCANCODE_RIGHT];
   player->keys.crouch = keys[SDL_SCANCODE_LSHIFT];
+  /*
+    player->keys.up = keys[SDL_SCANCODE_W];
+    player->keys.down = keys[SDL_SCANCODE_S];
+    player->keys.left = keys[SDL_SCANCODE_A];
+    player->keys.right = keys[SDL_SCANCODE_D];
+    player->keys.crouch = keys[SDL_SCANCODE_LSHIFT];
+  */
 
   if (keys[SDL_SCANCODE_ESCAPE])
     exit (0);
@@ -93,8 +101,6 @@ p_setup (game_player_t *player, game_world_t *world, game_camera_t *camera)
 
   player->keys = (game_player_keys_t){ 0, 0, 0, 0, 0 };
   player->mouse_sensitivity = 0.001f;
-
-  player->is_shooting = 0;
 }
 void
 p_destroy (game_player_t *player)
@@ -127,8 +133,18 @@ p_update (game_player_t *player)
 {
   p__handle_input (player);
   p__handle_movement (player);
-
-  g_c_set (player->camera);
+}
+void
+p_send_net_update (game_player_t *player)
+{
+  net_data_t msg;
+  {
+    msg.msg_type = 0;
+    msg.position = player->camera->pos;
+    msg.angles = player->camera->angles;
+    msg.health = player->health;
+  }
+  n_send (&msg);
 }
 
 void

@@ -7,7 +7,8 @@
 
 typedef struct net_data_s
 {
-  uint8_t msg_type;
+  int msg_type;
+  uint16_t client_id;
 
   vec3_t position;
   viewangles_t angles;
@@ -24,17 +25,21 @@ typedef struct net_connection_s
 
   ENetAddress con_addr;
   uint16_t con_port;
+
+  uint8_t has_connection;
 } net_connection_t;
 
-void n_main_init ();
+void n_setup (const char *hostname, uint16_t port);
 
-void n_setup (net_connection_t *connection, const char *hostname,
-              uint16_t port);
+void n_calc_client_id ();
 
-void n_send (net_connection_t *connection, net_data_t *msg);
+void n_send (net_data_t *msg);
 
-void n_destroy (net_connection_t *connection);
+void n_destroy ();
 
-void n_main_quit ();
+extern net_data_t n_last_msg;
+extern net_data_t n_clients[16];
+extern net_connection_t n_connection;
+extern uint16_t n_client_id;
 
 #endif /* NETWORK_H */

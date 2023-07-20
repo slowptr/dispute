@@ -23,7 +23,7 @@ typedef struct game_camera_s
 
 void g_c_setup (game_camera_t *camera, vec3_t pos, viewangles_t angles,
                 game_camera_viewbobbing_t viewbob);
-void g_c_set (game_camera_t *camera);
+void g_c_set (game_camera_t *camera, float yaw_add, float pitch_add);
 void g_c_reset (game_camera_t *camera);
 
 #endif /* CAMERA_H */

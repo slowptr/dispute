@@ -1,12 +1,15 @@
 #include "game.h"
 #include "bootleg3d.c"
+#include "network.h"
 #include "player.h"
 #include "renderer.h"
 #include "ui.h"
 #include "weapon.h"
+#include "weapon_action_handler.h"
 
 game_player_t localplayer;
 game_weapon_t w_pistol;
+game_weapon_action_handler_t w_a_handler;
 obj_t *dummy_model;
 
 void
@@ -47,13 +50,32 @@ g_setup (game_t *game, core_t *core, net_connection_t *net)
 
   dummy_model = g_ol_setup (game->core, "assets/player.obj");
 
-  { // pistol weapon
-    g_weap_setup (&w_pistol, 12, 100);
-    g_vm_setup (&w_pistol.viewmodel, game->core, localplayer.camera,
-                g_ol_setup (game->core, "assets/pistol.obj"));
-    w_pistol.viewmodel.scale = 0.05f;
-    w_pistol.viewmodel.rotation.y = PLAYER_PITCH_CAP * 2;
+  g_weap_create_pistol (&w_pistol, game->core, localplayer.camera);
+  g_weap_a_h_setup (&w_a_handler, &localplayer);
+
+  { // connection check
+    printf ("Trying to find server to connect to.\n");
+    for (uint16_t i = 0; i < 5; i++)
+      {
+        if (!n_connection.has_connection)
+          {
+            usleep (1);
+          }
+        else
+          {
+            printf ("Connected to server.\n");
+            break;
+          }
+      }
+
+    if (!n_connection.has_connection)
+      {
+        perror ("Failed to find server to connect to");
+        // exit (1);
+      }
   }
+
+  n_calc_client_id ();
 }
 void
 g_destroy (game_t *game)
@@ -69,15 +91,30 @@ g_run (game_t *game)
       if (c_frame_limiter (game->core, 60.f))
         continue;
 
+      g_weap_a_h_handle (&w_a_handler, localplayer.current_weapon);
+      g_c_set (localplayer.camera, 0, -w_a_handler.viewpunch); // handle recoil
+
       g__handle_events ();
       p_update (&localplayer);
+      p_send_net_update (&localplayer);
 
       b3d_clear ();
       b3d_reset ();
 
       g_w_render (&game->world);
 
-      p_render_dummy (game->core, dummy_model, (vec3_t){ 0, 1.f, 0 });
+      for (int i = 0; i < 16; i++)
+        {
+          if (i == n_client_id)
+            {
+              continue;
+            }
+          net_data_t *client = &n_clients[i];
+          if (client->msg_type != -1)
+            {
+              p_render_dummy (game->core, dummy_model, client->position);
+            }
+        }
 
       r_reset_depth_buffer (game->core);
       {
@@ -87,6 +124,7 @@ g_run (game_t *game)
           }
         g_ui_render ();
       }
+
       r_render_b3d (game->core);
     }
 }

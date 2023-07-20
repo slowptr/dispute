@@ -9,9 +9,7 @@ main (int argc, char **argv)
   core_t core;
   game_t game;
 
-  n_main_init ();
-
-  n_setup (&net, "127.0.0.1", 1933);
+  n_setup ("127.0.0.1", 1933);
   c_setup (&core);
   g_setup (&game, &core, &net);
   {
@@ -19,8 +17,6 @@ main (int argc, char **argv)
   }
   g_destroy (&game);
   c_destroy (&core);
-  n_destroy (&net);
-
-  n_main_quit ();
+  n_destroy ();
   return 0;
 }

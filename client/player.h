@@ -26,7 +26,6 @@ typedef struct game_player_s
 
   game_player_keys_t keys;
 
-  uint8_t is_shooting;
   float mouse_sensitivity;
 
   float health;
@@ -39,6 +38,7 @@ void p_destroy (game_player_t *player);
 void p_handle_mouse_events (game_player_t *player, SDL_Event *e);
 void p_handle_input (game_player_t *player);
 void p_update (game_player_t *player);
+void p_send_net_update (game_player_t *player);
 
 void p_render_dummy (core_t *core, obj_t *model, vec3_t position);
 

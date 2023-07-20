@@ -33,7 +33,7 @@ g_c_setup (game_camera_t *camera, vec3_t pos, viewangles_t angles,
   }
 }
 void
-g_c_set (game_camera_t *camera)
+g_c_set (game_camera_t *camera, float yaw_add, float pitch_add)
 {
   float add = 0;
   if (camera->viewbob.enabled)
@@ -44,7 +44,8 @@ g_c_set (game_camera_t *camera)
             * 10.f * camera->viewbob._offset;
     }
   b3d_set_camera (camera->pos.x, camera->pos.z + add, camera->pos.y,
-                  camera->angles.yaw, camera->angles.pitch, 0);
+                  camera->angles.yaw + yaw_add,
+                  camera->angles.pitch + pitch_add, 0);
 }
 void
 g_c_reset (game_camera_t *camera)
