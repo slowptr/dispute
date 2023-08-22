@@ -4,7 +4,7 @@
 #include <math.h>
 
 void
-p__movement_test (game_player_t *player)
+p__handle_movement_test (game_player_t *player)
 {
   float size = player->world->size;
   float boundary = player->world->boundary;
@@ -19,18 +19,34 @@ p__movement_test (game_player_t *player)
     player->camera->pos.y = size - boundary;
 }
 void
+p__handle_movement_jump (game_player_t *player)
+{
+  static int cooldown = 0;
+  if (player->keys.jump && (cooldown == 0))
+    {
+      player->velocity.z = 2.5f;
+      cooldown = 50;
+    }
+
+  if (cooldown > 0)
+    {
+      cooldown--;
+    }
+}
+void
 p__handle_movement (game_player_t *player)
 {
   if (player->keys.up)
     player->velocity.x += PLAYER_ACCEL;
   if (player->keys.down)
-    player->velocity.x += -PLAYER_ACCEL;
+    player->velocity.x += -PLAYER_ACCEL * 0.65f;
   if (player->keys.left)
-    player->velocity.y += PLAYER_ACCEL;
+    player->velocity.y += PLAYER_ACCEL * 0.8f;
   if (player->keys.right)
-    player->velocity.y += -PLAYER_ACCEL;
+    player->velocity.y += -PLAYER_ACCEL * 0.8f;
   player->camera->pos.z
-      += ((player->keys.crouch ? 0.5f : 1.0f) - player->camera->pos.z) * 0.1f;
+      += ((player->keys.crouch ? 0.5f : 1.0f) - player->camera->pos.z) * 0.2f;
+  player->camera->pos.z += player->velocity.z * 0.2f;
 
   player->camera->pos.x -= cosf (player->camera->angles.yaw - PLAYER_PITCH_CAP)
                            * player->velocity.x;
@@ -52,7 +68,10 @@ p__handle_movement (game_player_t *player)
       player->velocity.y *= 0.9f;
     }
 
-  p__movement_test (player);
+  player->velocity.z *= 0.75f;
+
+  p__handle_movement_test (player);
+  p__handle_movement_jump (player);
 }
 void
 p__handle_input (game_player_t *player)
@@ -64,6 +83,7 @@ p__handle_input (game_player_t *player)
   player->keys.left = keys[SDL_SCANCODE_LEFT];
   player->keys.right = keys[SDL_SCANCODE_RIGHT];
   player->keys.crouch = keys[SDL_SCANCODE_LSHIFT];
+  player->keys.jump = keys[SDL_SCANCODE_SPACE];
   /*
     player->keys.up = keys[SDL_SCANCODE_W];
     player->keys.down = keys[SDL_SCANCODE_S];
@@ -83,7 +103,7 @@ p_setup (game_player_t *player, game_world_t *world, game_camera_t *camera)
   player->camera = camera;
   player->current_weapon = NULL;
 
-  player->velocity = (vec2_t){ 0.f, 0.f };
+  player->velocity = (vec3_t){ 0.f, 0.f, 0.f };
 
   player->health = 100.f;
 

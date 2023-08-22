@@ -9,7 +9,7 @@ typedef struct game_camera_viewbobbing_s
   uint8_t enabled;
   float frequency, amplitude;
 
-  vec2_t *velocity;
+  vec3_t *velocity;
 
   float _timer, _offset;
   uint32_t _prev_frametime;

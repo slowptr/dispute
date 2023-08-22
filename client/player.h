@@ -14,7 +14,7 @@
 
 typedef struct game_player_keys_s
 {
-  uint8_t up, down, left, right, crouch, shoot;
+  uint8_t up, down, left, right, crouch, jump, shoot;
 } game_player_keys_t;
 
 typedef struct game_player_s
@@ -22,7 +22,7 @@ typedef struct game_player_s
   game_world_t *world;
   game_camera_t *camera;
   game_weapon_t *current_weapon;
-  vec2_t velocity;
+  vec3_t velocity;
 
   game_player_keys_t keys;
 
