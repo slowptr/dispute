@@ -2,7 +2,7 @@ CC=gcc
 ARGS=-Wall
 LIBS=
 TARGET=a.out
-SRCS=main.c core_wrapper.c renderer.c game.c player.c world.c camera.c ui.c obj_loader.c viewmodel.c weapon.c network.c weapon_action_handler.c weapon_bullet.c
+SRCS=main.c core_wrapper.c renderer.c game.c player.c world.c camera.c ui.c obj_loader.c viewmodel.c weapon.c network.c weapon_action_handler.c weapon_bullet.c dmap_loader.c
 
 ifeq ($(OS),Windows_NT)
 	# Windows specific settings

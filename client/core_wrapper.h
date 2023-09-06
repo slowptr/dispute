@@ -5,7 +5,7 @@
 
 #define WND_WIDTH 320
 #define WND_HEIGHT 240
-#define DEFAULT_FOV 80.f
+#define DEFAULT_FOV 90.f
 
 typedef struct core_s
 {

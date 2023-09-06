@@ -24,7 +24,7 @@ p__handle_movement_jump (game_player_t *player)
   static int cooldown = 0;
   if (player->keys.jump && (cooldown == 0))
     {
-      player->velocity.z = 2.5f;
+      player->velocity.z = 2.f;
       cooldown = 50;
     }
 
@@ -46,7 +46,8 @@ p__handle_movement (game_player_t *player)
     player->velocity.y += -PLAYER_ACCEL * 0.8f;
   player->camera->pos.z
       += ((player->keys.crouch ? 0.5f : 1.0f) - player->camera->pos.z) * 0.2f;
-  player->camera->pos.z += player->velocity.z * 0.2f;
+
+  player->camera->pos.z += player->velocity.z * 0.3f;
 
   player->camera->pos.x -= cosf (player->camera->angles.yaw - PLAYER_PITCH_CAP)
                            * player->velocity.x;
@@ -68,7 +69,7 @@ p__handle_movement (game_player_t *player)
       player->velocity.y *= 0.9f;
     }
 
-  player->velocity.z *= 0.75f;
+  player->velocity.z *= 0.75;
 
   p__handle_movement_test (player);
   p__handle_movement_jump (player);

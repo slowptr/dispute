@@ -1,5 +1,6 @@
 #include "game.h"
 #include "bootleg3d.c"
+#include "dmap_loader.h"
 #include "network.h"
 #include "player.h"
 #include "renderer.h"
@@ -46,7 +47,17 @@ g_setup (game_t *game, core_t *core, net_connection_t *net)
   game->core = core;
   game->net = net;
   p_setup (&localplayer, &game->world, &game->camera);
-  g_w_setup (&game->world, 20.f, 1.25f);
+
+  FILE *dmap_file = fopen ("test.dmap", "r");
+  if (!dmap_file)
+    {
+      perror ("failed to load dmap file");
+      exit (1);
+    }
+
+  float wsize, wbound;
+  dmap_load (dmap_file, &wsize, &wbound);
+  g_w_setup (&game->world, wsize, wbound);
 
   dummy_model = g_ol_setup (game->core, "assets/player.obj");
 
