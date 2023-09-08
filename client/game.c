@@ -12,6 +12,7 @@ game_player_t localplayer;
 game_weapon_t w_pistol;
 game_weapon_action_handler_t w_a_handler;
 obj_t *dummy_model;
+dmap_t *dmap;
 
 void
 g__handle_events ()
@@ -48,16 +49,8 @@ g_setup (game_t *game, core_t *core, net_connection_t *net)
   game->net = net;
   p_setup (&localplayer, &game->world, &game->camera);
 
-  FILE *dmap_file = fopen ("test.dmap", "r");
-  if (!dmap_file)
-    {
-      perror ("failed to load dmap file");
-      exit (1);
-    }
-
-  float wsize, wbound;
-  dmap_load (dmap_file, &wsize, &wbound);
-  g_w_setup (&game->world, wsize, wbound);
+  dmap = dmap_setup ("test.dmap");
+  g_w_setup (&game->world, dmap->world.size, dmap->world.boundary);
 
   dummy_model = g_ol_setup (game->core, "assets/player.obj");
 
@@ -93,6 +86,7 @@ g_destroy (game_t *game)
 {
   p_destroy (&localplayer);
   g_weap_destroy (&w_pistol);
+  dmap_destroy (dmap);
 }
 void
 g_run (game_t *game)
@@ -113,6 +107,17 @@ g_run (game_t *game)
       b3d_reset ();
 
       g_w_render (&game->world);
+      dmap_render (dmap);
+
+      { // dmap debug
+        const Uint8 *keys = SDL_GetKeyboardState (NULL);
+        if (keys[SDL_SCANCODE_P])
+          {
+            dmap_destroy (dmap);
+            dmap_setup ("test.dmap");
+            usleep (200 * 1000); // 200ms
+          }
+      }
 
       for (int i = 0; i < 16; i++)
         {
