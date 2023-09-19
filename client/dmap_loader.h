@@ -7,7 +7,8 @@
 
 typedef struct dmap_triangle_s
 {
-  float xt, yt, zt;
+  float xt, yt, zt; // translate
+  float xs, ys, zs; // scale
 
   float x1, y1, z1;
   float x2, y2, z2;

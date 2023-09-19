@@ -6,6 +6,7 @@
     This file is available under two licenses; see end of file.
 */
 
+#include "tga.h"
 #include <stdint.h>
 
 // Public API
@@ -25,8 +26,8 @@ int b3d_to_screen (float x, float y, float z, int *sx,
                    int *sy); // returns 1 if in front of camera
 void b3d_set_fov (float fov_in_degrees);
 int b3d_triangle (float ax, float ay, float az, float bx, float by, float bz,
-                  float cx, float cy, float cz,
-                  uint32_t c); // returns 1 if rendered
+                  float cx, float cy, float cz, uint32_t c,
+                  targa_file *tga); // returns 1 if rendered
 
 // You can also access these, but best to only read from them.
 extern int b3d_width, b3d_height;
@@ -342,7 +343,7 @@ b3d_clip_against_plane (b3d_vec_t plane, b3d_vec_t norm, b3d_triangle_t in,
 
 void
 b3d_rasterise (float ax, float ay, float az, float bx, float by, float bz,
-               float cx, float cy, float cz, uint32_t c)
+               float cx, float cy, float cz, uint32_t c, targa_file *tga)
 {
   ax = floorf (ax);
   bx = floorf (bx);
@@ -414,6 +415,14 @@ b3d_rasterise (float ax, float ay, float az, float bx, float by, float bz,
             {
               b3d_depth[p] = d;
               b3d_pixels[p] = c;
+
+              if (tga != NULL)
+                {
+                  if (p < (tga->head.width * tga->head.height))
+                    {
+                      b3d_pixels[p] = tga->image_data[p];
+                    }
+                }
             }
           d += depth_step;
         }
@@ -461,7 +470,7 @@ b3d_rasterise (float ax, float ay, float az, float bx, float by, float bz,
 
 int
 b3d_triangle (float ax, float ay, float az, float bx, float by, float bz,
-              float cx, float cy, float cz, uint32_t c)
+              float cx, float cy, float cz, uint32_t c, targa_file *tga)
 {
   b3d_triangle_t t = (b3d_triangle_t){
     { { ax, ay, az, 1 }, { bx, by, bz, 1 }, { cx, cy, cz, 1 } }
@@ -552,7 +561,8 @@ b3d_triangle (float ax, float ay, float az, float bx, float by, float bz,
       b3d_triangle_t *triangle = &queue[i];
       b3d_rasterise (triangle->p[0].x, triangle->p[0].y, triangle->p[0].z,
                      triangle->p[1].x, triangle->p[1].y, triangle->p[1].z,
-                     triangle->p[2].x, triangle->p[2].y, triangle->p[2].z, c);
+                     triangle->p[2].x, triangle->p[2].y, triangle->p[2].z, c,
+                     tga);
     }
   return 1;
 }
@@ -666,31 +676,30 @@ This software is available under 2 licenses, choose whichever you prefer:
 
 ALTERNATIVE A - MIT License
 Copyright (c) 2022 Benedict Henshaw
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions: The above copyright
+notice and this permission notice shall be included in all copies or
+substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ALTERNATIVE B - Public Domain (www.unlicense.org)
 This is free and unencumbered software released into the public domain.
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
-software, either in source code form or as a compiled binary, for any purpose,
-commercial or non-commercial, and by any means.
-In jurisdictions that recognize copyright laws, the author or authors of this
-software dedicate any and all copyright interest in the software to the public
-domain. We make this dedication for the benefit of the public at large and to
-the detriment of our heirs and successors. We intend this dedication to be an
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute
+this software, either in source code form or as a compiled binary, for any
+purpose, commercial or non-commercial, and by any means. In jurisdictions
+that recognize copyright laws, the author or authors of this software
+dedicate any and all copyright interest in the software to the public domain.
+We make this dedication for the benefit of the public at large and to the
+detriment of our heirs and successors. We intend this dedication to be an
 overt act of relinquishment in perpetuity of all present and future rights to
 this software under copyright law.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR

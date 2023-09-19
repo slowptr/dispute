@@ -44,6 +44,6 @@ g_vm_render (game_viewmodel_t *viewmodel)
                     viewmodel->model->triangles[i + 6],
                     viewmodel->model->triangles[i + 7],
                     viewmodel->model->triangles[i + 8],
-                    (i << 16 | i / 2 << 8 | 0));
+                    (i << 16 | i / 2 << 8 | 0), NULL);
     }
 }

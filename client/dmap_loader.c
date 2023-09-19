@@ -27,8 +27,28 @@ dmap_setup (const char *file_name)
           dmap->triangles = realloc (
               dmap->triangles, (dmap->ti + 1) * sizeof (dmap_triangle_t));
 
-          // x, y: height, z... americans are fucked up
-          sscanf (line, "t %f %f %f: %f %f %f, %f %f %f, %f %f %f",
+          dmap->triangles[dmap->ti].xs = 1.f;
+          dmap->triangles[dmap->ti].ys = 1.f;
+          dmap->triangles[dmap->ti].zs = 1.f;
+
+          if (line[1] == 's')
+            {
+              sscanf (
+                  line, "ts %f %f %f: %f %f %f: %f %f %f, %f %f %f, %f %f %f",
+                  &dmap->triangles[dmap->ti].xt, &dmap->triangles[dmap->ti].yt,
+                  &dmap->triangles[dmap->ti].zt, &dmap->triangles[dmap->ti].xs,
+                  &dmap->triangles[dmap->ti].ys, &dmap->triangles[dmap->ti].zs,
+                  &dmap->triangles[dmap->ti].x1, &dmap->triangles[dmap->ti].y1,
+                  &dmap->triangles[dmap->ti].z1, &dmap->triangles[dmap->ti].x2,
+                  &dmap->triangles[dmap->ti].y2, &dmap->triangles[dmap->ti].z2,
+                  &dmap->triangles[dmap->ti].x3, &dmap->triangles[dmap->ti].y3,
+                  &dmap->triangles[dmap->ti].z3);
+            }
+          else
+            {
+              // x, y: height, z... americans are fucked up
+              sscanf (
+                  line, "t %f %f %f: %f %f %f, %f %f %f, %f %f %f",
                   &dmap->triangles[dmap->ti].xt, &dmap->triangles[dmap->ti].yt,
                   &dmap->triangles[dmap->ti].zt, &dmap->triangles[dmap->ti].x1,
                   &dmap->triangles[dmap->ti].y1, &dmap->triangles[dmap->ti].z1,
@@ -36,6 +56,7 @@ dmap_setup (const char *file_name)
                   &dmap->triangles[dmap->ti].z2, &dmap->triangles[dmap->ti].x3,
                   &dmap->triangles[dmap->ti].y3,
                   &dmap->triangles[dmap->ti].z3);
+            }
 
           dmap->ti++;
         }
@@ -51,6 +72,9 @@ dmap_render (dmap_t *dmap)
       uint32_t c = 0xFFFFFF;
 
       b3d_reset ();
+      b3d_scale (dmap->triangles[i].xs, dmap->triangles[i].ys,
+                 dmap->triangles[i].zs);
+
       b3d_translate (dmap->triangles[i].xt, dmap->triangles[i].yt,
                      dmap->triangles[i].zt);
 
@@ -58,7 +82,7 @@ dmap_render (dmap_t *dmap)
                     dmap->triangles[i].z1, dmap->triangles[i].x2,
                     dmap->triangles[i].y2, dmap->triangles[i].z2,
                     dmap->triangles[i].x3, dmap->triangles[i].y3,
-                    dmap->triangles[i].z3, c);
+                    dmap->triangles[i].z3, c, NULL);
     }
 }
 void

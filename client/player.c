@@ -181,6 +181,6 @@ p_render_dummy (core_t *core, obj_t *model, vec3_t position)
                     model->triangles[i + 2], model->triangles[i + 3],
                     model->triangles[i + 4], model->triangles[i + 5],
                     model->triangles[i + 6], model->triangles[i + 7],
-                    model->triangles[i + 8], (i << 16 | 0 << 8 | i));
+                    model->triangles[i + 8], (i << 16 | 0 << 8 | i), NULL);
     }
 }

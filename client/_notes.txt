@@ -1,0 +1,24 @@
+# Map Loader / System
+- world size: width & height
+- list of objects
+	- object:
+		- coords: x, y, z
+		- mult: float
+		- rotation?: degree relative to the 0 point?
+- walls
+	- p1: x, y, z
+	- p2: x, y, z
+		- p1 = down left,
+			p2 = upper right
+	- (thickness: float)
+	- color: r, g, b
+
+```
+s 20.0 20.0
+
+w 0 0 0 5 5 5
+
+```
+
+# Texture Management?
+- i wanna skybox :)
